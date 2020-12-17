@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
 
 export class StrictEventEmitter<
-  EventsMap extends Record<string | symbol, (...data: any[]) => void>
+  EventsMap extends Record<string | symbol, any>
 > extends EventEmitter {
   constructor() {
     super()
