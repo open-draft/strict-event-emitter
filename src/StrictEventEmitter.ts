@@ -27,6 +27,20 @@ export class StrictEventEmitter<
     return super.addListener(event.toString(), listener)
   }
 
+  prependListener<K extends keyof EventMap>(
+    event: K,
+    listener: EventMap[K]
+  ): this {
+    return super.prependListener(event.toString(), listener)
+  }
+
+  prependOnceListener<K extends keyof EventMap>(
+    event: K,
+    listener: EventMap[K]
+  ): this {
+    return super.prependOnceListener(event.toString(), listener)
+  }
+
   removeListener<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
     return super.removeListener(event.toString(), listener)
   }
