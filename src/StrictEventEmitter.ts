@@ -36,12 +36,12 @@ export class StrictEventEmitter<
     return super.eventNames()
   }
 
-  listeners<K extends keyof EventMap>(event: K): Function[] {
-    return super.listeners(event.toString())
+  listeners<K extends keyof EventMap>(event: K): Array<EventMap[K]> {
+    return super.listeners(event.toString()) as Array<EventMap[K]>
   }
 
-  rawListeners<K extends keyof EventMap>(event: K): Function[] {
-    return super.rawListeners(event.toString())
+  rawListeners<K extends keyof EventMap>(event: K): Array<EventMap[K]> {
+    return super.rawListeners(event.toString()) as Array<EventMap[K]>
   }
 
   listenerCount<K extends keyof EventMap>(event: K): number {
