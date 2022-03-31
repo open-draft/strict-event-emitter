@@ -1,33 +1,50 @@
 import { EventEmitter } from 'events'
 
 export class StrictEventEmitter<
-  EventsMap extends Record<string | symbol, any>
+  EventMap extends Record<string | symbol, any>
 > extends EventEmitter {
   constructor() {
     super()
   }
 
-  on<K extends keyof EventsMap>(event: K, listener: EventsMap[K]) {
+  on<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
     return super.on(event.toString(), listener)
   }
 
-  once<K extends keyof EventsMap>(event: K, listener: EventsMap[K]) {
+  once<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
     return super.on(event.toString(), listener)
   }
 
-  off<K extends keyof EventsMap>(event: K, listener: EventsMap[K]) {
+  off<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
     return super.off(event.toString(), listener)
   }
 
-  emit<K extends keyof EventsMap>(event: K, ...data: Parameters<EventsMap[K]>) {
+  emit<K extends keyof EventMap>(event: K, ...data: Parameters<EventMap[K]>) {
     return super.emit(event.toString(), ...data)
   }
 
-  addListener<K extends keyof EventsMap>(event: K, listener: EventsMap[K]) {
+  addListener<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
     return super.addListener(event.toString(), listener)
   }
 
-  removeListener<K extends keyof EventsMap>(event: K, listener: EventsMap[K]) {
+  removeListener<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
     return super.removeListener(event.toString(), listener)
+  }
+
+  // @ts-ignore Cannot cast a narrower return type.
+  eventNames(): Array<keyof EventMap> {
+    return super.eventNames()
+  }
+
+  listeners<K extends keyof EventMap>(event: K): Function[] {
+    return super.listeners(event.toString())
+  }
+
+  rawListeners<K extends keyof EventMap>(event: K): Function[] {
+    return super.rawListeners(event.toString())
+  }
+
+  listenerCount<K extends keyof EventMap>(event: K): number {
+    return super.listenerCount(event.toString())
   }
 }
