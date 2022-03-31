@@ -1,7 +1,8 @@
 import { StrictEventEmitter } from '../src'
 
-interface EventMap {
+type EventMap = {
   greet(username: string): void
+  ping(): void
 }
 
 const emitter = new StrictEventEmitter<EventMap>()
@@ -40,3 +41,12 @@ listeners.forEach((listener) => {
     2
   )
 })
+
+/**
+ * Event names.
+ */
+emitter.eventNames()[0] === 'greet'
+emitter.eventNames()[1] === 'ping'
+
+// @ts-expect-error Unknown event name "foo".
+emitter.eventNames()[2] === 'foo'

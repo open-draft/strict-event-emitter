@@ -1,64 +1,82 @@
 import { EventEmitter } from 'events'
 
+export type EventMapType = Record<string | symbol, any>
+
 export class StrictEventEmitter<
-  EventMap extends Record<string | symbol, any>
+  EventMap extends EventMapType
 > extends EventEmitter {
   constructor() {
     super()
   }
 
-  on<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
+  on<Event extends keyof EventMap>(event: Event, listener: EventMap[Event]) {
     return super.on(event.toString(), listener)
   }
 
-  once<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
+  once<Event extends keyof EventMap>(event: Event, listener: EventMap[Event]) {
     return super.on(event.toString(), listener)
   }
 
-  off<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
+  off<Event extends keyof EventMap>(event: Event, listener: EventMap[Event]) {
     return super.off(event.toString(), listener)
   }
 
-  emit<K extends keyof EventMap>(event: K, ...data: Parameters<EventMap[K]>) {
+  emit<Event extends keyof EventMap>(
+    event: Event,
+    ...data: Parameters<EventMap[Event]>
+  ) {
     return super.emit(event.toString(), ...data)
   }
 
-  addListener<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
+  addListener<Event extends keyof EventMap>(
+    event: Event,
+    listener: EventMap[Event]
+  ) {
     return super.addListener(event.toString(), listener)
   }
 
-  prependListener<K extends keyof EventMap>(
-    event: K,
-    listener: EventMap[K]
+  prependListener<Event extends keyof EventMap>(
+    event: Event,
+    listener: EventMap[Event]
   ): this {
     return super.prependListener(event.toString(), listener)
   }
 
-  prependOnceListener<K extends keyof EventMap>(
-    event: K,
-    listener: EventMap[K]
+  prependOnceListener<Event extends keyof EventMap>(
+    event: Event,
+    listener: EventMap[Event]
   ): this {
     return super.prependOnceListener(event.toString(), listener)
   }
 
-  removeListener<K extends keyof EventMap>(event: K, listener: EventMap[K]) {
+  removeListener<Event extends keyof EventMap>(
+    event: Event,
+    listener: EventMap[Event]
+  ) {
     return super.removeListener(event.toString(), listener)
   }
 
-  // @ts-ignore Cannot cast a narrower return type.
-  eventNames(): Array<keyof EventMap> {
-    return super.eventNames()
+  removeAllListeners<Event extends keyof EventMap>(event?: Event) {
+    return super.removeAllListeners(event ? event.toString() : undefined)
   }
 
-  listeners<K extends keyof EventMap>(event: K): Array<EventMap[K]> {
-    return super.listeners(event.toString()) as Array<EventMap[K]>
+  eventNames<Event extends keyof EventMap>(): Event[] {
+    return super.eventNames() as Event[]
   }
 
-  rawListeners<K extends keyof EventMap>(event: K): Array<EventMap[K]> {
-    return super.rawListeners(event.toString()) as Array<EventMap[K]>
+  listeners<Event extends keyof EventMap>(
+    event: Event
+  ): Array<EventMap[Event]> {
+    return super.listeners(event.toString()) as Array<EventMap[Event]>
   }
 
-  listenerCount<K extends keyof EventMap>(event: K): number {
+  rawListeners<Event extends keyof EventMap>(
+    event: Event
+  ): Array<EventMap[Event]> {
+    return super.rawListeners(event.toString()) as Array<EventMap[Event]>
+  }
+
+  listenerCount<Event extends keyof EventMap>(event: Event): number {
     return super.listenerCount(event.toString())
   }
 }

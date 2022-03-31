@@ -1,1 +1,1 @@
-export { StrictEventEmitter } from './StrictEventEmitter'
+export * from './StrictEventEmitter'
