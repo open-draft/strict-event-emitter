@@ -1,6 +1,6 @@
 {
   "name": "strict-event-emitter",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Type-safe \"EventEmitter\" for everyday use",
   "main": "lib/index.js",
   "typings": "lib/index.js",
