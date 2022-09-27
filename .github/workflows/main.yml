@@ -27,7 +27,7 @@ jobs:
           git config --local user.name "Artem Zakharchenko"
           git config --local user.email "kettanaito@gmail.com"
 
-      - run: yarn instal --frozen-lockfile
+      - run: yarn install --frozen-lockfile
 
       - run: yarn test
       - run: yarn test:ts
