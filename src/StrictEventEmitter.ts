@@ -14,7 +14,7 @@ export class StrictEventEmitter<
   }
 
   once<Event extends keyof EventMap>(event: Event, listener: EventMap[Event]) {
-    return super.on(event.toString(), listener)
+    return super.once(event.toString(), listener)
   }
 
   off<Event extends keyof EventMap>(event: Event, listener: EventMap[Event]) {
