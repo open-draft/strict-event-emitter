@@ -1,0 +1,40 @@
+name: ci
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CI_GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          always-auth: true
+          cache: yarn
+
+      - name: Setup Git
+        run: |
+          git config --local user.name "Artem Zakharchenko"
+          git config --local user.email "kettanaito@gmail.com"
+
+      - run: yarn instal --frozen-lockfile
+
+      - run: yarn test
+
+      - run: yarn build
+
+      - name: Release
+        if: github.ref == 'refs/heads/main'
+        run: yarn release
+        env:
+          GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
