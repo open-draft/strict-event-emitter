@@ -1,8 +1,8 @@
 import { StrictEventEmitter } from '../src/StrictEventEmitter'
 
 interface EventsMap {
-  ping: (n: number) => void
-  pong: (n: number) => void
+  ping: (number: number) => void
+  pong: (number: number) => void
 }
 
 it('restricts on/emit methods to the given events map', () => {
@@ -29,6 +29,39 @@ it('dispatches "once" callback only once', () => {
 
   expect(callback).toBeCalledTimes(1)
   expect(callback).toBeCalledWith(5)
+})
+
+describe('removeListener()', () => {
+  it('removes an existing listener', () => {
+    const firstListener = jest.fn()
+    const secondListener = jest.fn()
+    const emitter = new StrictEventEmitter<EventsMap>()
+
+    emitter.on('ping', firstListener)
+    emitter.on('ping', secondListener)
+    emitter.removeListener('ping', firstListener)
+
+    emitter.emit('ping', 5)
+
+    expect(firstListener).not.toHaveBeenCalled()
+    expect(secondListener).toHaveBeenCalledWith(5)
+  })
+
+  it('does nothing given non-existing event name', () => {
+    const callback = jest.fn()
+    const emitter = new StrictEventEmitter<EventsMap>()
+
+    emitter.on('ping', callback)
+    emitter.removeListener(
+      // @ts-expect-error Runtime invalid value.
+      'non-existing',
+      callback
+    )
+
+    emitter.emit('ping', 5)
+
+    expect(callback).toHaveBeenCalledWith(5)
+  })
 })
 
 describe('removeAllListeners()', () => {
