@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 
-export type EventMapType = Record<string | symbol, any>
+export type EventMapType = Record<string | symbol | number, any>
 
 export class StrictEventEmitter<
   EventMap extends EventMapType

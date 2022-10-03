@@ -20,8 +20,8 @@
   ],
   "devDependencies": {
     "@ossjs/release": "^0.4.0",
+    "@types/events": "^3.0.0",
     "@types/jest": "^26.0.19",
-    "@types/node": "^14.14.14",
     "jest": "^26.6.3",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.4.4",
