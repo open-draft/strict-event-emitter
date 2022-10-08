@@ -4,10 +4,10 @@
   "description": "Type-safe \"EventEmitter\" for everyday use",
   "main": "lib/index.js",
   "module": "lib/index.mjs",
-  "typings": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "exports": {
     ".": {
-      "types": "./lib/index.d.js",
+      "types": "./lib/index.d.ts",
       "require": "./lib/index.js",
       "default": "./lib/index.mjs"
     }
