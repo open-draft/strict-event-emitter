@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "outDir": "lib"
+    "outDir": "lib",
+    "types": []
   },
   "include": ["src/index.ts"]
 }
