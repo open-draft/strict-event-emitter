@@ -57,7 +57,11 @@ export class StrictEventEmitter<
   }
 
   removeAllListeners<Event extends keyof EventMap>(event?: Event) {
-    return super.removeAllListeners(event?.toString())
+    if (event) {
+      return super.removeAllListeners(event.toString())
+    }
+
+    return super.removeAllListeners()
   }
 
   eventNames<Event extends keyof EventMap>(): Event[] {
