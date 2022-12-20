@@ -1,6 +1,8 @@
 import { EventMapType } from './StrictEventEmitter'
 
-export type StrictListener<Data> = (data: Data) => void
+export type StrictListener<Type extends string, Data> = (
+  message: StrictMessageEvent<Type, Data>
+) => void
 
 /**
  * A type-safe implementation of the `EventTarget` interface.
@@ -8,26 +10,26 @@ export type StrictListener<Data> = (data: Data) => void
 export class StrictEventTarget<
   EventMap extends EventMapType
 > extends EventTarget {
-  public dispatchEvent<Event extends keyof EventMap>(
-    event: StrictMessageEvent<Event & string, EventMap[Event]>
+  public dispatchEvent<Event extends keyof EventMap & string>(
+    event: StrictMessageEvent<Event, EventMap[Event]>
   ): boolean {
     return super.dispatchEvent(event)
   }
 
   public addEventListener<Type extends keyof EventMap>(
-    type: Type & string,
-    listener: StrictListener<EventMap[Type]>,
+    type: Type,
+    listener: StrictListener<Type & string, EventMap[Type]>,
     options?: boolean | AddEventListenerOptions
   ): void {
-    return super.addEventListener(type, listener, options)
+    return super.addEventListener(type as string, listener, options)
   }
 
   public removeEventListener<Type extends keyof EventMap>(
-    type: Type & string,
-    listener: StrictListener<EventMap[Type]>,
+    type: Type,
+    listener: StrictListener<Type & string, EventMap[Type]>,
     options?: boolean | EventListenerOptions
   ): void {
-    return super.removeEventListener(type, listener, options)
+    return super.removeEventListener(type as string, listener, options)
   }
 }
 

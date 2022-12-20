@@ -8,6 +8,7 @@
   "author": "Artem Zakharchenko <kettanaito@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "dev": "tsc -w",
     "test": "jest",
     "test:ts": "tsc -p test/typings.tsconfig.json",
     "clean": "rimraf ./lib",
