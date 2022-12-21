@@ -39,6 +39,10 @@ emitter.once('removeListener', (event, listener) => {
   event.toUpperCase()
   listener.name.toUpperCase()
 })
+emitter.on('newListener', (event, listener) => {
+  event.toUpperCase()
+  listener.name.toUpperCase()
+})
 emitter.on('removeListener', (event, listener) => {
   event.toUpperCase()
   listener.name.toUpperCase()
@@ -62,6 +66,14 @@ emitter.once(
 
 emitter.addListener('hello', (name) => name.toUpperCase())
 emitter.addListener('goodbye', (name) => name.toUpperCase())
+emitter.addListener('newListener', (event, listener) => {
+  event.toUpperCase()
+  listener.name.toUpperCase()
+})
+emitter.addListener('removeListener', (event, listener) => {
+  event.toUpperCase()
+  listener.name.toUpperCase()
+})
 emitter.addListener(
   // @ts-expect-error Invalid event name.
   'unknown',
@@ -81,6 +93,8 @@ emitter.removeListener(
 
 emitter.off('hello', () => {})
 emitter.off('goodbye', () => {})
+emitter.off('newListener', () => {})
+emitter.off('removeListener', () => {})
 emitter.off(
   // @ts-expect-error Invalid event name.
   'unknown',
@@ -89,8 +103,23 @@ emitter.off(
 
 emitter.removeAllListeners('hello')
 emitter.removeAllListeners('goodbye')
+emitter.removeAllListeners('newListener')
+emitter.removeAllListeners('removeListener')
 emitter.removeAllListeners()
 emitter.removeAllListeners(
+  // @ts-expect-error Invalid event name.
+  'unknown'
+)
+
+/**
+ * .listenerCount()
+ */
+emitter.listenerCount('hello')
+emitter.listenerCount('goodbye')
+emitter.listenerCount('newListener')
+emitter.listenerCount('removeListener')
+
+emitter.listenerCount(
   // @ts-expect-error Invalid event name.
   'unknown'
 )
