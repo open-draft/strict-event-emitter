@@ -1,4 +1,4 @@
-import { type Emitter } from './Emitter'
+import type { Emitter } from './Emitter'
 
 export class MemoryLeakError extends Error {
   constructor(
