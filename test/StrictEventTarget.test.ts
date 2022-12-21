@@ -9,9 +9,8 @@ it('invokes related listeners upon a dispatched event', () => {
   const listener = jest.fn()
 
   target.addEventListener('hello', listener)
-  target.dispatchEvent(new StrictMessageEvent('hello', { data: 'world' }))
+  const event = new StrictMessageEvent('hello', { data: 'world' })
+  target.dispatchEvent(event)
 
-  expect(listener).toHaveBeenCalledWith(
-    new MessageEvent('hello', { data: 'world' })
-  )
+  expect(listener).toHaveBeenCalledWith(event)
 })
