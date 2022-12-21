@@ -145,6 +145,7 @@ export class Emitter<Events extends EventMap> {
     this.#events.set(eventName, nextListeners)
 
     if (
+      this.#maxListeners > 0 &&
       this.listenerCount(eventName) > this.#maxListeners &&
       !this.#hasWarnedAboutPotentialMemortyLeak
     ) {
