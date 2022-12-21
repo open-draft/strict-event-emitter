@@ -1,7 +1,7 @@
 {
   "name": "strict-event-emitter",
   "version": "0.3.1",
-  "description": "Type-safe \"EventEmitter\" for everyday use",
+  "description": "Environment-agnostic, type-safe event emitter.",
   "main": "lib/index.js",
   "typings": "lib/index.js",
   "repository": "git@github.com:open-draft/strict-event-emitter.git",
