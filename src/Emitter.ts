@@ -4,11 +4,9 @@ export type EventMap = {
   [eventName: string]: Array<unknown>
 }
 
-export type NewListenerEventListener<Events extends EventMap> = Listener<
-  [eventName: keyof Events, listener: Listener<Array<unknown>>]
->
+export type InternalEventNames = 'newListener' | 'removeListener'
 
-export type RemoveListenerEventListener<Events extends EventMap> = Listener<
+export type InternalListener<Events extends EventMap> = Listener<
   [eventName: keyof Events, listener: Listener<Array<unknown>>]
 >
 
@@ -44,7 +42,7 @@ export class Emitter<Events extends EventMap> {
 
   #getListeners<EventName extends keyof Events>(
     eventName: EventName
-  ): Array<Listener<Events[EventName]>> {
+  ): Array<Listener<Array<unknown>>> {
     return this.#events.get(eventName) || []
   }
 
@@ -73,7 +71,7 @@ export class Emitter<Events extends EventMap> {
   }
 
   #internalEmit(
-    internalEventName: 'newListener' | 'removeListener',
+    internalEventName: InternalEventNames,
     eventName: keyof Events,
     listener: Listener<Array<unknown>>
   ): void {
@@ -128,9 +126,17 @@ export class Emitter<Events extends EventMap> {
     return listeners.length > 0
   }
 
+  public addListener(
+    eventName: InternalEventNames,
+    listener: InternalListener<Events>
+  ): this
   public addListener<EventName extends keyof Events>(
     eventName: EventName,
     listener: Listener<Events[EventName]>
+  ): this
+  public addListener(
+    eventName: InternalEventNames | keyof Events,
+    listener: InternalListener<Events> | Listener<Events[any]>
   ): this {
     // Emit the `newListener` event before adding the listener.
     this.#internalEmit('newListener', eventName, listener)
@@ -156,14 +162,13 @@ export class Emitter<Events extends EventMap> {
   }
 
   public on(
-    eventName: 'removeListener',
-    listener: RemoveListenerEventListener<Events>
+    eventName: InternalEventNames,
+    listener: InternalListener<Events>
   ): this
   public on<EventName extends keyof Events>(
     eventName: EventName,
     listener: Listener<Events[EventName]>
   ): this
-
   public on<EventName extends keyof Events>(
     eventName: 'removeListener' | EventName,
     listener: Listener<any>
@@ -172,18 +177,13 @@ export class Emitter<Events extends EventMap> {
   }
 
   public once(
-    eventName: 'newListener',
-    listener: NewListenerEventListener<Events>
-  ): this
-  public once(
-    eventName: 'removeListener',
-    listener: RemoveListenerEventListener<Events>
+    eventName: InternalEventNames,
+    listener: InternalListener<Events>
   ): this
   public once<EventName extends keyof Events>(
     eventName: EventName,
     listener: Listener<Events[EventName]>
   ): this
-
   public once<EventName extends keyof Events>(
     eventName: 'newListener' | EventName,
     listener: Listener<any>
@@ -220,9 +220,17 @@ export class Emitter<Events extends EventMap> {
     )
   }
 
+  public removeListener(
+    eventName: InternalEventNames,
+    listener: InternalListener<Events>
+  ): this
   public removeListener<EventName extends keyof Events>(
     eventName: EventName,
     listener: Listener<Events[EventName]>
+  ): this
+  public removeListener(
+    eventName: InternalEventNames | keyof Events,
+    listener: Listener<any>
   ): this {
     const listeners = this.#getListeners(eventName)
 
@@ -237,21 +245,33 @@ export class Emitter<Events extends EventMap> {
     return this
   }
 
+  public off(
+    eventName: InternalEventNames,
+    listener: InternalListener<Events>
+  ): this
+  public off<EventName extends keyof Events>(
+    eventName: EventName,
+    listener: Listener<Events[EventName]>
+  ): this
   /**
    * Alias for `emitter.removeListener()`.
    *
    * @example
    * emitter.off('hello', listener)
    */
-  public off<EventName extends keyof Events>(
-    eventName: EventName,
-    listener: Listener<Events[EventName]>
+  public off(
+    eventName: InternalEventNames | keyof Events,
+    listener: Listener<any>
   ): this {
     return this.removeListener(eventName, listener)
   }
 
+  public removeAllListeners(eventName?: InternalEventNames): this
   public removeAllListeners<EventName extends keyof Events>(
     eventName?: EventName
+  ): this
+  public removeAllListeners(
+    eventName?: InternalEventNames | keyof Events
   ): this {
     if (eventName) {
       this.#events.delete(eventName)
