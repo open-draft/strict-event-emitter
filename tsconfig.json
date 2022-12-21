@@ -3,8 +3,7 @@
     "target": "esnext",
     "module": "commonjs",
     "declaration": true,
-    "outDir": "lib",
-    "types": ["@types/jest"]
+    "outDir": "./lib"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

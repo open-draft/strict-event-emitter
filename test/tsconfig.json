@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "esModuleInterop": true,
+    "types": ["@types/jest"]
   },
-  "include": ["**/*.ts", "../src/**/*.ts"]
+  "include": ["./global.d.ts", "**/*.test.ts", "../src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
