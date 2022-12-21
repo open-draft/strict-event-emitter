@@ -110,3 +110,16 @@ emitter.removeAllListeners(
   // @ts-expect-error Invalid event name.
   'unknown'
 )
+
+/**
+ * .listenerCount()
+ */
+emitter.listenerCount('hello')
+emitter.listenerCount('goodbye')
+emitter.listenerCount('newListener')
+emitter.listenerCount('removeListener')
+
+emitter.listenerCount(
+  // @ts-expect-error Invalid event name.
+  'unknown'
+)

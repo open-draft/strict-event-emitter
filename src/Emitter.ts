@@ -185,7 +185,7 @@ export class Emitter<Events extends EventMap> {
     listener: Listener<Events[EventName]>
   ): this
   public once<EventName extends keyof Events>(
-    eventName: 'newListener' | EventName,
+    eventName: InternalEventNames | EventName,
     listener: Listener<any>
   ): this {
     return this.addListener(
@@ -194,9 +194,17 @@ export class Emitter<Events extends EventMap> {
     )
   }
 
+  public prependListener(
+    eventName: InternalEventNames,
+    listener: InternalListener<Events>
+  ): this
   public prependListener<EventName extends keyof Events>(
     eventName: EventName,
     listener: Listener<Events[EventName]>
+  ): this
+  public prependListener(
+    eventName: InternalEventNames | keyof Events,
+    listener: Listener<any>
   ): this {
     const listeners = this.#getListeners(eventName)
 
@@ -210,9 +218,17 @@ export class Emitter<Events extends EventMap> {
     return this
   }
 
+  public prependOnceListener(
+    eventName: InternalEventNames,
+    listener: InternalListener<Events>
+  ): this
   public prependOnceListener<EventName extends keyof Events>(
     eventName: EventName,
     listener: Listener<Events[EventName]>
+  ): this
+  public prependOnceListener(
+    eventName: InternalEventNames | keyof Events,
+    listener: Listener<any>
   ): this {
     return this.prependListener(
       eventName,
@@ -282,21 +298,25 @@ export class Emitter<Events extends EventMap> {
     return this
   }
 
+  public listeners(eventName: InternalEventNames): Array<Listener<any>>
+  public listeners<EventName extends keyof Events>(
+    eventName: EventName
+  ): Array<Listener<Events[EventName]>>
   /**
    * Returns a copy of the array of listeners for the event named `eventName`.
    */
-  public listeners<EventName extends keyof Events>(
-    eventName: EventName
-  ): Array<Listener<Events[EventName]>> {
+  public listeners(eventName: InternalEventNames | keyof Events) {
     return Array.from(this.#getListeners(eventName))
   }
 
+  public listenerCount(eventName: InternalEventNames): number
+  public listenerCount<EventName extends keyof Events>(
+    eventName: EventName
+  ): number
   /**
    * Returns the number of listeners listening to the event named `eventName`.
    */
-  public listenerCount<EventName extends keyof Events>(
-    eventName: EventName
-  ): number {
+  public listenerCount(eventName: InternalEventNames | keyof Events): number {
     return this.#getListeners(eventName).length
   }
 
