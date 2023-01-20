@@ -21,9 +21,9 @@ export type Listener<Data extends Array<unknown>> = (...data: Data) => void
  * emitter.emit('hello', 'John')
  */
 export class Emitter<Events extends EventMap> {
-  #events: Map<keyof Events, Array<Listener<any>>>
-  #maxListeners: number
-  #hasWarnedAboutPotentialMemortyLeak: boolean
+  private events: Map<keyof Events, Array<Listener<any>>>
+  private maxListeners: number
+  private hasWarnedAboutPotentialMemortyLeak: boolean
 
   static defaultMaxListeners = 10
 
@@ -35,42 +35,12 @@ export class Emitter<Events extends EventMap> {
   }
 
   constructor() {
-    this.#events = new Map()
-    this.#maxListeners = Emitter.defaultMaxListeners
-    this.#hasWarnedAboutPotentialMemortyLeak = false
+    this.events = new Map()
+    this.maxListeners = Emitter.defaultMaxListeners
+    this.hasWarnedAboutPotentialMemortyLeak = false
   }
 
-  #getListeners<EventName extends keyof Events>(
-    eventName: EventName
-  ): Array<Listener<Array<unknown>>> {
-    return this.#events.get(eventName) || []
-  }
-
-  #removeListener<EventName extends keyof Events>(
-    listeners: Array<Listener<Events[EventName]>>,
-    listener: Listener<Events[EventName]>
-  ): Array<Listener<Events[EventName]>> {
-    const index = listeners.indexOf(listener)
-    if (index > -1) {
-      listeners.splice(index, 1)
-    }
-
-    return []
-  }
-
-  #wrapOnceListener<EventName extends keyof Events>(
-    eventName: EventName,
-    listener: Listener<Events[EventName]>
-  ): Listener<Events[EventName]> {
-    const onceListener = (...data: Events[EventName]) => {
-      this.removeListener(eventName, onceListener)
-      listener.apply(this, data)
-    }
-
-    return onceListener
-  }
-
-  #internalEmit(
+  private _emitInternalEvent(
     internalEventName: InternalEventNames,
     eventName: keyof Events,
     listener: Listener<Array<unknown>>
@@ -83,8 +53,39 @@ export class Emitter<Events extends EventMap> {
     )
   }
 
+  private _getListeners<EventName extends keyof Events>(
+    eventName: EventName
+  ): Array<Listener<Array<unknown>>> {
+    return this.events.get(eventName) || []
+  }
+
+  private _removeListener<EventName extends keyof Events>(
+    listeners: Array<Listener<Events[EventName]>>,
+    listener: Listener<Events[EventName]>
+  ): Array<Listener<Events[EventName]>> {
+    const index = listeners.indexOf(listener)
+
+    if (index > -1) {
+      listeners.splice(index, 1)
+    }
+
+    return []
+  }
+
+  private _wrapOnceListener<EventName extends keyof Events>(
+    eventName: EventName,
+    listener: Listener<Events[EventName]>
+  ): Listener<Events[EventName]> {
+    const onceListener = (...data: Events[keyof Events]) => {
+      this.removeListener(eventName, onceListener)
+      listener.apply(this, data)
+    }
+
+    return onceListener
+  }
+
   public setMaxListeners(maxListeners: number): this {
-    this.#maxListeners = maxListeners
+    this.maxListeners = maxListeners
     return this
   }
 
@@ -94,7 +95,7 @@ export class Emitter<Events extends EventMap> {
    * `Emitteer.defaultMaxListeners`.
    */
   public getMaxListeners(): number {
-    return this.#maxListeners
+    return this.maxListeners
   }
 
   /**
@@ -102,7 +103,7 @@ export class Emitter<Events extends EventMap> {
    * The values in the array will be strings or Symbols.
    */
   public eventNames(): Array<keyof Events> {
-    return Array.from(this.#events.keys())
+    return Array.from(this.events.keys())
   }
 
   /**
@@ -118,7 +119,7 @@ export class Emitter<Events extends EventMap> {
     eventName: EventName,
     ...data: Events[EventName]
   ): boolean {
-    const listeners = this.#getListeners(eventName)
+    const listeners = this._getListeners(eventName)
     listeners.forEach((listener) => {
       listener.apply(this, data)
     })
@@ -139,17 +140,17 @@ export class Emitter<Events extends EventMap> {
     listener: InternalListener<Events> | Listener<Events[any]>
   ): this {
     // Emit the `newListener` event before adding the listener.
-    this.#internalEmit('newListener', eventName, listener)
+    this._emitInternalEvent('newListener', eventName, listener)
 
-    const nextListeners = this.#getListeners(eventName).concat(listener)
-    this.#events.set(eventName, nextListeners)
+    const nextListeners = this._getListeners(eventName).concat(listener)
+    this.events.set(eventName, nextListeners)
 
     if (
-      this.#maxListeners > 0 &&
-      this.listenerCount(eventName) > this.#maxListeners &&
-      !this.#hasWarnedAboutPotentialMemortyLeak
+      this.maxListeners > 0 &&
+      this.listenerCount(eventName) > this.maxListeners &&
+      !this.hasWarnedAboutPotentialMemortyLeak
     ) {
-      this.#hasWarnedAboutPotentialMemortyLeak = true
+      this.hasWarnedAboutPotentialMemortyLeak = true
 
       const memoryLeakWarning = new MemoryLeakError(
         this,
@@ -191,7 +192,7 @@ export class Emitter<Events extends EventMap> {
   ): this {
     return this.addListener(
       eventName,
-      this.#wrapOnceListener(eventName, listener)
+      this._wrapOnceListener(eventName, listener)
     )
   }
 
@@ -207,13 +208,13 @@ export class Emitter<Events extends EventMap> {
     eventName: InternalEventNames | keyof Events,
     listener: Listener<any>
   ): this {
-    const listeners = this.#getListeners(eventName)
+    const listeners = this._getListeners(eventName)
 
     if (listeners.length > 0) {
       const nextListeners = [listener].concat(listeners)
-      this.#events.set(eventName, nextListeners)
+      this.events.set(eventName, nextListeners)
     } else {
-      this.#events.set(eventName, listeners.concat(listener))
+      this.events.set(eventName, listeners.concat(listener))
     }
 
     return this
@@ -233,7 +234,7 @@ export class Emitter<Events extends EventMap> {
   ): this {
     return this.prependListener(
       eventName,
-      this.#wrapOnceListener(eventName, listener)
+      this._wrapOnceListener(eventName, listener)
     )
   }
 
@@ -249,14 +250,14 @@ export class Emitter<Events extends EventMap> {
     eventName: InternalEventNames | keyof Events,
     listener: Listener<any>
   ): this {
-    const listeners = this.#getListeners(eventName)
+    const listeners = this._getListeners(eventName)
 
     if (listeners.length > 0) {
-      this.#removeListener(listeners, listener)
-      this.#events.set(eventName, listeners)
+      this._removeListener(listeners, listener)
+      this.events.set(eventName, listeners)
 
       // Emit the `removeListener` event after removing the listener.
-      this.#internalEmit('removeListener', eventName, listener)
+      this._emitInternalEvent('removeListener', eventName, listener)
     }
 
     return this
@@ -291,9 +292,9 @@ export class Emitter<Events extends EventMap> {
     eventName?: InternalEventNames | keyof Events
   ): this {
     if (eventName) {
-      this.#events.delete(eventName)
+      this.events.delete(eventName)
     } else {
-      this.#events.clear()
+      this.events.clear()
     }
 
     return this
@@ -307,7 +308,7 @@ export class Emitter<Events extends EventMap> {
    * Returns a copy of the array of listeners for the event named `eventName`.
    */
   public listeners(eventName: InternalEventNames | keyof Events) {
-    return Array.from(this.#getListeners(eventName))
+    return Array.from(this._getListeners(eventName))
   }
 
   public listenerCount(eventName: InternalEventNames): number
@@ -318,7 +319,7 @@ export class Emitter<Events extends EventMap> {
    * Returns the number of listeners listening to the event named `eventName`.
    */
   public listenerCount(eventName: InternalEventNames | keyof Events): number {
-    return this.#getListeners(eventName).length
+    return this._getListeners(eventName).length
   }
 
   public rawListeners<EventName extends keyof Events>(
