@@ -23,7 +23,7 @@ export type Listener<Data extends Array<unknown>> = (...data: Data) => void
 export class Emitter<Events extends EventMap> {
   private events: Map<keyof Events, Array<Listener<any>>>
   private maxListeners: number
-  private hasWarnedAboutPotentialMemortyLeak: boolean
+  private hasWarnedAboutPotentialMemoryLeak: boolean
 
   static defaultMaxListeners = 10
 
@@ -37,7 +37,7 @@ export class Emitter<Events extends EventMap> {
   constructor() {
     this.events = new Map()
     this.maxListeners = Emitter.defaultMaxListeners
-    this.hasWarnedAboutPotentialMemortyLeak = false
+    this.hasWarnedAboutPotentialMemoryLeak = false
   }
 
   private _emitInternalEvent(
@@ -92,7 +92,7 @@ export class Emitter<Events extends EventMap> {
   /**
    * Returns the current max listener value for the `Emitter` which is
    * either set by `emitter.setMaxListeners(n)` or defaults to
-   * `Emitteer.defaultMaxListeners`.
+   * `Emitter.defaultMaxListeners`.
    */
   public getMaxListeners(): number {
     return this.maxListeners
@@ -148,9 +148,9 @@ export class Emitter<Events extends EventMap> {
     if (
       this.maxListeners > 0 &&
       this.listenerCount(eventName) > this.maxListeners &&
-      !this.hasWarnedAboutPotentialMemortyLeak
+      !this.hasWarnedAboutPotentialMemoryLeak
     ) {
-      this.hasWarnedAboutPotentialMemortyLeak = true
+      this.hasWarnedAboutPotentialMemoryLeak = true
 
       const memoryLeakWarning = new MemoryLeakError(
         this,

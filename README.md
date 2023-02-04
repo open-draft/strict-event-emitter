@@ -15,7 +15,7 @@ const emitter = new EventEmitter()
 emitter.on('ping', (n: number) => {})
 
 // We can, however, emit a different event by mistake.
-emitter.emit('poing', 1)
+emitter.emit('pong', 1)
 
 // Or even the correct event with the wrong data.
 emitter.emit('ping', 'wait, not a number')
@@ -70,7 +70,7 @@ interface Events {
 const emitter = new Emitter<Events>()
 
 // 3. Use the "emitter" the same way you'd use the regular "EventEmitter" instance.
-emitter.addListner('connect', (id) => {})
+emitter.addListener('connect', (id) => {})
 emitter.emit('connect', 'abc-123')
 ```
 
