@@ -2,7 +2,6 @@ name: ci
 on:
   push:
     branches:
-      - master
       - main
   pull_request:
   workflow_dispatch:
@@ -18,25 +17,28 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18.8.0
           always-auth: true
-          cache: yarn
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.12
 
       - name: Setup Git
         run: |
           git config --local user.name "Artem Zakharchenko"
           git config --local user.email "kettanaito@gmail.com"
 
-      - run: yarn install --frozen-lockfile
+      - run: pnpm install
 
-      - run: yarn test
-      - run: yarn test:ts
+      - run: pnpm test
+      - run: pnpm test:ts
 
-      - run: yarn build
+      - run: pnpm build
 
       - name: Release
         if: github.ref == 'refs/heads/main'
-        run: yarn release
+        run: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
