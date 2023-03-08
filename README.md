@@ -1,44 +1,49 @@
 # Strict Event Emitter
 
-`EventEmitter` mirror that restricts emitting/handling events other than specified in an interface.
-
-## Features
-
-- Restricts emitting of the unknown event types.
-- Infers emitted data types from the listener's call signature.
+A type-safe implementation of `EventEmitter` for browser and Node.js.
 
 ## Motivation
 
-The native `EventEmitter` class uses a generic `string` to describe what type of events can be emitted. In most cases you design a strict set of events that you expect your emitter to emit/listen to. This package helps you to type-annotate an emitter instance to produce type violations if an unknown event is emitted/listened to.
+Despite event emitters potentially accepting any runtime value, defining a strict event contract is crucial when developing complex event-driven architectures. Unfortunately, the native type definitions for Node's `EventEmitter` annotate event names as `string`, which forbids any stricter type validation.
 
 ```js
+// index.js
 const emitter = new EventEmitter()
 
-emitter.addListener('ping', (n: number) => {})
+// Let's say our application expects a "ping"
+// event with the number payload.
+emitter.on('ping', (n: number) => {})
 
-// The "pong" event is not expected, but will be emitted anyway.
-// The data passed to the event is incompatible with the expected type.
-emitter.emit('pong', 'not a number')
+// We can, however, emit a different event by mistake.
+emitter.emit('pong', 1)
+
+// Or even the correct event with the wrong data.
+emitter.emit('ping', 'wait, not a number')
 ```
 
-```ts
-import { StrictEventEmitter } from 'strict-event-emitter'
+The purpose of this library is to provide an `EventEmitter` instance that can accept a generic describing the expected events contract.
 
-interface EventsMap {
-  ping: (n: number) => void
+```ts
+import { Emitter } from 'strict-event-emitter'
+
+// Define a strict events contract where keys
+// represent event names and values represent
+// the list of arguments expected in ".emit()".
+type Events = {
+  ping: [number]
 }
 
-const emitter = new StrictEventEmitter<EventsMap>()
+const emitter = new Emitter<Events>()
 emitter.addListener('ping', (n) => {
   // "n" argument type is inferred as "number'.
 })
 
 emitter.emit('ping', 10) // OK
-emitter.emit('ping', 'wait, not a number') // TypeError
-emitter.emit('unknown', 10) // TypeError
+emitter.emit('unknown', 10) // TypeError (invalid event name)
+emitter.emit('ping', 'wait, not a number') // TypeError (invalid data)
 ```
 
-This library is a superset class of the native `EventEmitter` with only the type definition logic attached. There's no additional functionality present.
+This library is also a custom `EventEmitter` implementation, which makes it compatible with other environments, like browsers or React Native.
 
 ## Getting started
 
@@ -51,21 +56,21 @@ npm install strict-event-emitter
 ### Use
 
 ```ts
-import { StrictEventEmitter } from 'strict-event-emitter'
+import { Emitter } from 'strict-event-emitter'
 
 // 1. Define an interface that describes your events.
-// Set event names as the keys, and their listner functions as the values.
-interface EventsMap {
-  connect: (id: string) => void
-  disconnect: (id: string) => void
+// Set event names as the keys, and their expected payloads as values.
+interface Events {
+  connect: [id: string]
+  disconnect: [id: string]
 }
 
-// 2. Create a strict emitter and pass the previously defined "EventsMap"
+// 2. Create a strict emitter and pass the previously defined "Events"
 // as its first generic argument.
-const emitter = new StrictEventEmitter<EventsMap>()
+const emitter = new Emitter<Events>()
 
 // 3. Use the "emitter" the same way you'd use the regular "EventEmitter" instance.
-emitter.addListner('connect', (id) => {})
+emitter.addListener('connect', (id) => {})
 emitter.emit('connect', 'abc-123')
 ```
 
