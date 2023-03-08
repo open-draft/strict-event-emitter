@@ -3,7 +3,15 @@
   "version": "0.4.6",
   "description": "Type-safe implementation of EventEmitter for browser and Node.js",
   "main": "lib/index.js",
+  "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.js",
+      "default": "./lib/index.mjs"
+    }
+  },
   "repository": "git@github.com:open-draft/strict-event-emitter.git",
   "author": "Artem Zakharchenko <kettanaito@gmail.com>",
   "license": "MIT",
@@ -12,7 +20,7 @@
     "test": "jest",
     "test:ts": "tsc -p test/typings.tsconfig.json",
     "clean": "rimraf ./lib",
-    "build": "pnpm clean && tsc",
+    "build": "pnpm clean && tsup",
     "release": "release publish"
   },
   "files": [
@@ -27,6 +35,7 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^9.1.1",
+    "tsup": "^6.2.3",
     "typescript": "4.8"
   }
 }
