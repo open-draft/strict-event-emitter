@@ -20,7 +20,7 @@
     "test": "jest",
     "test:ts": "tsc -p test/typings.tsconfig.json",
     "clean": "rimraf ./lib",
-    "build": "yarn clean && tsup",
+    "build": "pnpm clean && tsup",
     "release": "release publish"
   },
   "files": [
