@@ -1,6 +1,6 @@
 {
   "name": "strict-event-emitter",
-  "version": "0.4.6",
+  "version": "0.5.0",
   "description": "Type-safe implementation of EventEmitter for browser and Node.js",
   "main": "lib/index.js",
   "module": "lib/index.mjs",
