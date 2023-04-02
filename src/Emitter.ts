@@ -119,7 +119,7 @@ export class Emitter<Events extends EventMap> {
     eventName: EventName,
     ...data: Events[EventName]
   ): boolean {
-    const listeners = this._getListeners(eventName)
+    const listeners = [...this._getListeners(eventName)]
     listeners.forEach((listener) => {
       listener.apply(this, data)
     })
