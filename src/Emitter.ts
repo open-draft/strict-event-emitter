@@ -56,7 +56,9 @@ export class Emitter<Events extends EventMap> {
   private _getListeners<EventName extends keyof Events>(
     eventName: EventName
   ): Array<Listener<Array<unknown>>> {
-    return this.events.get(eventName) || []
+    // Always return a copy of the listeners array
+    // so they are fixed at the time of the "_getListeners" call.
+    return Array.prototype.concat.apply([], this.events.get(eventName)) || []
   }
 
   private _removeListener<EventName extends keyof Events>(
@@ -80,6 +82,9 @@ export class Emitter<Events extends EventMap> {
       this.removeListener(eventName, onceListener)
       listener.apply(this, data)
     }
+
+    // Inherit the name of the original listener.
+    Object.defineProperty(onceListener, 'name', { value: listener.name })
 
     return onceListener
   }

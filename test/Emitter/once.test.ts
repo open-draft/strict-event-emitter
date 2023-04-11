@@ -36,3 +36,27 @@ it('can have multiple once listeners for different events', () => {
   expect(emitter.listenerCount('hello')).toBe(0)
   expect(emitter.listenerCount('goodbye')).toBe(0)
 })
+
+it('emits multiple "once" event of the same name', () => {
+  const emitter = new Emitter<Events>()
+  const firstHelloListener = jest.fn()
+  const secondHelloListener = jest.fn()
+
+  Object.defineProperty(firstHelloListener, 'name', {
+    value: 'firstHelloListener',
+  })
+  Object.defineProperty(secondHelloListener, 'name', {
+    value: 'secondHelloListener',
+  })
+
+  emitter.once('hello', firstHelloListener)
+  emitter.once('hello', secondHelloListener)
+
+  emitter.emit('hello', 'John')
+
+  expect(firstHelloListener).toHaveBeenCalledTimes(1)
+  expect(firstHelloListener).toHaveBeenCalledWith('John')
+
+  expect(secondHelloListener).toHaveBeenCalledTimes(1)
+  expect(secondHelloListener).toHaveBeenCalledWith('John')
+})
