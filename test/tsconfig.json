@@ -3,7 +3,8 @@
     "noEmit": true,
     "esModuleInterop": true,
     "types": ["@types/jest"],
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "lib": ["es2019"]
   },
   "include": ["./global.d.ts", "**/*.test.ts", "../src/**/*.ts"],
   "exclude": ["node_modules"]
