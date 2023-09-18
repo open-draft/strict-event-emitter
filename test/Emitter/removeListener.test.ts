@@ -14,18 +14,25 @@ it('removes a single listener', () => {
 
   expect(listener).not.toHaveBeenCalled()
   expect(emitter.listenerCount('hello')).toBe(0)
+  expect(emitter.listeners('hello')).toEqual([])
 })
 
 it('removes a single listener, but not others', () => {
   const emitter = new Emitter<Events>()
-  const listener = jest.fn()
-  emitter.on('hello', listener)
-  emitter.on('hello', listener)
-  emitter.removeListener('hello', listener)
+  const firstHelloListener = jest.fn()
+  const secondHelloListener = jest.fn()
+
+  emitter.on('hello', firstHelloListener)
+  emitter.on('hello', secondHelloListener)
+  emitter.removeListener('hello', firstHelloListener)
+
+  expect(emitter.listenerCount('hello')).toBe(1)
+  expect(emitter.listeners('hello')).toEqual([secondHelloListener])
+
   emitter.emit('hello', 'John')
 
-  expect(listener).toHaveBeenCalledTimes(1)
-  expect(emitter.listenerCount('hello')).toBe(1)
+  expect(firstHelloListener).not.toHaveBeenCalled()
+  expect(secondHelloListener).toHaveBeenCalledTimes(1)
 })
 
 it('emits "removeListener" after the listener is removed', () => {
