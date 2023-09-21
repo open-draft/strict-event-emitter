@@ -80,7 +80,12 @@ export class Emitter<Events extends EventMap> {
   ): Listener<Events[EventName]> {
     const onceListener = (...data: Events[keyof Events]) => {
       this.removeListener(eventName, onceListener)
-      listener.apply(this, data)
+
+      /**
+       * @note Return the result of the original listener.
+       * This way this wrapped preserves listeners that are async.
+       */
+      return listener.apply(this, data)
     }
 
     // Inherit the name of the original listener.
