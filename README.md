@@ -58,9 +58,9 @@ npm install strict-event-emitter
 ```ts
 import { Emitter } from 'strict-event-emitter'
 
-// 1. Define an interface that describes your events.
+// 1. Define a type that describes your events.
 // Set event names as the keys, and their expected payloads as values.
-interface Events {
+type Events = {
   connect: [id: string]
   disconnect: [id: string]
 }
